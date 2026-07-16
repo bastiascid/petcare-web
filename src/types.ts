@@ -42,6 +42,16 @@ export interface Alert {
   read: boolean;
 }
 
+export interface Appointment {
+  id: string;
+  petId: string;
+  clinicId: string;
+  ownerId: string;
+  service: string;
+  date: string; // ISO String
+  status: 'Confirmada' | 'Pendiente' | 'Realizada';
+}
+
 export interface AdoptionPost {
   id: string;
   creatorId: string; // Quien lo publica

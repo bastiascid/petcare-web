@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
-import { PawPrint, Settings, ChevronRight, House, Heart, MapPin, Bell } from 'lucide-react';
+import { PawPrint, Settings, ChevronRight, House, Heart, MapPin, Bell, CalendarDays, Plus } from 'lucide-react';
 import { useStore } from '../../store';
 
 export function OwnerLayout() {
@@ -13,6 +13,7 @@ export function OwnerLayout() {
   const nav = [
     { label: 'Inicio', icon: House, path: '' },
     { label: 'Mis Mascotas', icon: PawPrint, path: 'pets' },
+    { label: 'Calendario', icon: CalendarDays, path: 'calendar' },
     { label: 'Comunidad & Adopciones', icon: Heart, path: 'community' },
     { label: 'Directorio', icon: MapPin, path: 'directory' }
   ];
@@ -59,12 +60,97 @@ export function OwnerLayout() {
           </div>
         </header>
         <Routes>
-          <Route path="" element={<div className="content-narrow"><h2>Bienvenido al panel principal</h2><p>Aquí verás un resumen de las próximas citas y alertas.</p></div>} />
-          <Route path="pets" element={<div className="content-narrow"><h2>Mis Mascotas</h2><p>Fichas de tus mascotas</p></div>} />
+          <Route path="" element={<div className="content-narrow"><h2>Bienvenido al panel principal</h2><p>Tienes {unreadAlerts} alertas nuevas.</p></div>} />
+          <Route path="pets" element={<OwnerPets />} />
+          <Route path="calendar" element={<OwnerCalendar />} />
           <Route path="community" element={<CommunityView />} />
           <Route path="directory" element={<div className="content-narrow"><h2>Directorio Médico</h2><p>Clínicas afiliadas y suscripciones destacadas.</p></div>} />
         </Routes>
       </main>
+    </div>
+  );
+}
+
+function OwnerPets() {
+  const { pets, currentUser, addPet } = useStore();
+  const [showModal, setShowModal] = useState(false);
+  const myPets = pets.filter(p => p.ownerId === currentUser?.id);
+  const [form, setForm] = useState({ name: '', species: 'Perro', breed: '', sex: 'Macho', birth: '', weight: 0, color: '' });
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if(currentUser) {
+      addPet({ ...form, ownerId: currentUser.id });
+      setShowModal(false);
+    }
+  };
+
+  return (
+    <div className="content-narrow">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2>Mis Mascotas</h2>
+        <button className="add" onClick={() => setShowModal(true)}><Plus size={18}/> Registrar Mascota</button>
+      </div>
+      <div className="grid">
+        {myPets.map(p => (
+          <div className="card" key={p.id}>
+            <b>{p.name}</b> <span>({p.species})</span>
+            <p>Raza: {p.breed} · Peso: {p.weight}kg</p>
+          </div>
+        ))}
+      </div>
+
+      {showModal && (
+        <div className="overlay">
+          <section className="modal">
+            <button className="close" onClick={() => setShowModal(false)}>×</button>
+            <h2>Registrar Mascota</h2>
+            <form onSubmit={submit}>
+              <label>Nombre <input required value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></label>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                <label>Especie <select value={form.species} onChange={e => setForm({...form, species: e.target.value})}><option>Perro</option><option>Gato</option></select></label>
+                <label>Raza <input required value={form.breed} onChange={e => setForm({...form, breed: e.target.value})} /></label>
+                <label>Sexo <select value={form.sex} onChange={e => setForm({...form, sex: e.target.value})}><option>Macho</option><option>Hembra</option></select></label>
+                <label>Nacimiento <input type="date" required value={form.birth} onChange={e => setForm({...form, birth: e.target.value})} /></label>
+                <label>Peso (kg) <input type="number" required value={form.weight} onChange={e => setForm({...form, weight: Number(e.target.value)})} /></label>
+                <label>Color <input required value={form.color} onChange={e => setForm({...form, color: e.target.value})} /></label>
+              </div>
+              <button className="submit" style={{ marginTop: '15px' }}>Guardar mascota</button>
+            </form>
+          </section>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function OwnerCalendar() {
+  const { appointments, currentUser, clinics, pets } = useStore();
+  const myApps = appointments.filter(a => a.ownerId === currentUser?.id);
+
+  return (
+    <div className="content-narrow">
+      <section className="card calendar">
+        <div className="section-head">
+          <div><p className="eyebrow">PRÓXIMOS DÍAS</p><h2>Calendario sanitario</h2></div>
+        </div>
+        <div className="calendar-grid">
+          {Array.from({length:31},(_,i)=>{
+            const day = i+1;
+            const ev = myApps.filter(a => new Date(a.date).getDate() === day);
+            return (
+              <div className={ev.length ? 'date has-event' : 'date'} key={day}>
+                <b>{day}</b>
+                {ev.map(x => {
+                  const pet = pets.find(p => p.id === x.petId);
+                  const clinic = clinics.find(c => c.id === x.clinicId);
+                  return <span key={x.id}>{pet?.name}: {x.service} en {clinic?.name}</span>;
+                })}
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }

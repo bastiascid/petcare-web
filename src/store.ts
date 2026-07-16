@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Clinic, Pet, Alert, AdoptionPost } from './types';
+import { User, Clinic, Pet, Alert, AdoptionPost, Appointment } from './types';
 
 // Datos de prueba iniciales
 const mockUsers: User[] = [
@@ -20,6 +20,10 @@ const mockAdoptions: AdoptionPost[] = [
   { id: 'a1', creatorId: 'owner1', petName: 'Pelusa', species: 'Gato', age: '3 meses', description: 'Gatita muy juguetona buscando hogar', contactPhone: '+56987654321', status: 'AVAILABLE', datePosted: new Date().toISOString() }
 ];
 
+const mockAppointments: Appointment[] = [
+  { id: 'app1', petId: 'p1', clinicId: 'c1', ownerId: 'owner1', service: 'Consulta General', date: new Date(Date.now() + 86400000).toISOString(), status: 'Confirmada' }
+];
+
 interface AppState {
   // Estado de Autenticación
   currentUser: User | null;
@@ -32,11 +36,14 @@ interface AppState {
   pets: Pet[];
   alerts: Alert[];
   adoptions: AdoptionPost[];
+  appointments: Appointment[];
 
   // Acciones
   addAlert: (alert: Omit<Alert, 'id' | 'date'>) => void;
   markAlertRead: (id: string) => void;
   addAdoption: (post: Omit<AdoptionPost, 'id' | 'datePosted' | 'status'>) => void;
+  addPet: (pet: Omit<Pet, 'id'>) => void;
+  addAppointment: (app: Omit<Appointment, 'id' | 'status'>) => void;
 }
 
 export const useStore = create<AppState>((set, get) => ({
@@ -47,6 +54,7 @@ export const useStore = create<AppState>((set, get) => ({
   pets: mockPets,
   alerts: [],
   adoptions: mockAdoptions,
+  appointments: mockAppointments,
 
   login: (email: string) => {
     const user = get().users.find(u => u.email === email);
@@ -73,5 +81,30 @@ export const useStore = create<AppState>((set, get) => ({
   addAdoption: (post) => {
     const newPost: AdoptionPost = { ...post, id: Date.now().toString(), datePosted: new Date().toISOString(), status: 'AVAILABLE' };
     set(state => ({ adoptions: [...state.adoptions, newPost] }));
+  },
+
+  addPet: (pet) => {
+    const newPet: Pet = { ...pet, id: Date.now().toString() };
+    set(state => ({ pets: [...state.pets, newPet] }));
+  },
+
+  addAppointment: (app) => {
+    const newApp: Appointment = { ...app, id: Date.now().toString(), status: 'Confirmada' };
+    
+    // Disparar la alerta al dueño de forma automática
+    const alert: Alert = {
+      id: Date.now().toString() + '_alert',
+      senderId: app.clinicId,
+      receiverId: app.ownerId,
+      title: 'Nueva visita agendada',
+      message: `Tienes una nueva visita programada para el servicio: ${app.service} en la fecha ${new Date(app.date).toLocaleString()}.`,
+      date: new Date().toISOString(),
+      read: false
+    };
+
+    set(state => ({ 
+      appointments: [...state.appointments, newApp],
+      alerts: [...state.alerts, alert]
+    }));
   }
 }));
