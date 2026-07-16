@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useStore } from './store';
 import { Login } from './views/Login';
@@ -7,7 +7,15 @@ import { VetLayout } from './views/vet/VetLayout';
 import { AdminLayout } from './views/admin/AdminLayout';
 
 export function App() {
-  const { currentUser } = useStore();
+  const { currentUser, isLoading, fetchData } = useStore();
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  if (isLoading) {
+    return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: '#f8fafc', color: '#64748b' }}>Cargando base de datos...</div>;
+  }
 
   return (
     <BrowserRouter>
