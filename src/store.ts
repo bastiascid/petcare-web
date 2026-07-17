@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { User, Clinic, Pet, Alert, AdoptionPost, Appointment } from './types';
+import { User, Clinic, Pet, Alert, AdoptionPost, Appointment, Role, MedicalRecord, StaffDoctor } from './types';
 import { supabase } from './lib/supabase';
 
 interface AppState {
@@ -15,12 +15,35 @@ interface AppState {
   alerts: Alert[];
   adoptions: AdoptionPost[];
   appointments: Appointment[];
+  medicalRecords: MedicalRecord[];
+  staffDoctors: StaffDoctor[];
 
   // Estado de Carga
   isLoading: boolean;
   
   // Acciones (Asíncronas)
   fetchData: () => Promise<void>;
+  
+  // CRUD Usuarios (Admin)
+  addUser: (user: Omit<User, 'id'>) => Promise<void>;
+  updateUserRole: (id: string, role: Role) => Promise<void>;
+  deleteUser: (id: string) => Promise<void>;
+
+  // CRUD Clínicas (Admin)
+  addClinic: (clinic: Omit<Clinic, 'id'>) => Promise<void>;
+  updateClinicSubscription: (id: string, sub: 'FREE' | 'PRO' | 'PREMIUM') => Promise<void>;
+  deleteClinic: (id: string) => Promise<void>;
+
+  // CRUD Médicos (Clínica)
+  addDoctor: (doctor: Omit<StaffDoctor, 'id'>) => Promise<void>;
+  deleteDoctor: (id: string) => Promise<void>;
+
+  // CRUD Fichas Clínicas (Clínica)
+  addMedicalRecord: (record: Omit<MedicalRecord, 'id' | 'date'>) => Promise<void>;
+
+  // Moderación
+  deleteAdoption: (id: string) => Promise<void>;
+
   addAlert: (alert: Omit<Alert, 'id' | 'date'>) => Promise<void>;
   markAlertRead: (id: string) => Promise<void>;
   addAdoption: (post: Omit<AdoptionPost, 'id' | 'datePosted' | 'status'>) => Promise<void>;
@@ -36,6 +59,8 @@ export const useStore = create<AppState>((set, get) => ({
   alerts: [],
   adoptions: [],
   appointments: [],
+  medicalRecords: [],
+  staffDoctors: [],
   isLoading: true,
 
   fetchData: async () => {
@@ -46,14 +71,18 @@ export const useStore = create<AppState>((set, get) => ({
         { data: pets },
         { data: alerts },
         { data: adoptions },
-        { data: appointments }
+        { data: appointments },
+        { data: medicalRecords },
+        { data: staffDoctors }
       ] = await Promise.all([
         supabase.from('users').select('*'),
         supabase.from('clinics').select('*'),
         supabase.from('pets').select('*'),
         supabase.from('alerts').select('*'),
         supabase.from('adoptions').select('*'),
-        supabase.from('appointments').select('*')
+        supabase.from('appointments').select('*'),
+        supabase.from('medical_records').select('*'),
+        supabase.from('staff_doctors').select('*')
       ]);
 
       // Mapear snake_case (BD) a camelCase (Frontend)
@@ -64,6 +93,8 @@ export const useStore = create<AppState>((set, get) => ({
         alerts: alerts?.map(a => ({...a, senderId: a.sender_id, receiverId: a.receiver_id})) || [],
         adoptions: adoptions?.map(a => ({...a, creatorId: a.creator_id, petName: a.pet_name, contactPhone: a.contact_phone, datePosted: a.date_posted})) || [],
         appointments: appointments?.map(a => ({...a, petId: a.pet_id, clinicId: a.clinic_id, ownerId: a.owner_id})) || [],
+        medicalRecords: medicalRecords?.map(m => ({...m, petId: m.pet_id, clinicId: m.clinic_id, doctorName: m.doctor_name, recordType: m.record_type})) || [],
+        staffDoctors: staffDoctors?.map(d => ({...d, clinicId: d.clinic_id})) || [],
         isLoading: false
       });
     } catch (error) {
@@ -167,5 +198,55 @@ export const useStore = create<AppState>((set, get) => ({
         alerts: newAlert ? [...state.alerts, { ...newAlert, senderId: newAlert.sender_id, receiverId: newAlert.receiver_id }] : state.alerts
       }));
     }
+  },
+
+  addUser: async (user) => {
+    const { data, error } = await supabase.from('users').insert(user).select().single();
+    if (!error && data) set(state => ({ users: [...state.users, data] }));
+  },
+  updateUserRole: async (id, role) => {
+    const { error } = await supabase.from('users').update({ role }).eq('id', id);
+    if (!error) set(state => ({ users: state.users.map(u => u.id === id ? { ...u, role } : u) }));
+  },
+  deleteUser: async (id) => {
+    const { error } = await supabase.from('users').delete().eq('id', id);
+    if (!error) set(state => ({ users: state.users.filter(u => u.id !== id) }));
+  },
+
+  addClinic: async (clinic) => {
+    const payload = { owner_id: clinic.ownerId, name: clinic.name, address: clinic.address, phone: clinic.phone, subscription: clinic.subscription, services: clinic.services };
+    const { data, error } = await supabase.from('clinics').insert(payload).select().single();
+    if (!error && data) set(state => ({ clinics: [...state.clinics, { ...data, ownerId: data.owner_id }] }));
+  },
+  updateClinicSubscription: async (id, sub) => {
+    const { error } = await supabase.from('clinics').update({ subscription: sub }).eq('id', id);
+    if (!error) set(state => ({ clinics: state.clinics.map(c => c.id === id ? { ...c, subscription: sub } : c) }));
+  },
+  deleteClinic: async (id) => {
+    const { error } = await supabase.from('clinics').delete().eq('id', id);
+    if (!error) set(state => ({ clinics: state.clinics.filter(c => c.id !== id) }));
+  },
+
+  addDoctor: async (doc) => {
+    const payload = { clinic_id: doc.clinicId, name: doc.name, specialty: doc.specialty, phone: doc.phone };
+    const { data, error } = await supabase.from('staff_doctors').insert(payload).select().single();
+    if (!error && data) set(state => ({ staffDoctors: [...state.staffDoctors, { ...data, clinicId: data.clinic_id }] }));
+  },
+  deleteDoctor: async (id) => {
+    const { error } = await supabase.from('staff_doctors').delete().eq('id', id);
+    if (!error) set(state => ({ staffDoctors: state.staffDoctors.filter(d => d.id !== id) }));
+  },
+
+  addMedicalRecord: async (rec) => {
+    const payload = { pet_id: rec.petId, clinic_id: rec.clinicId, doctor_name: rec.doctorName, record_type: rec.recordType, diagnosis: rec.diagnosis, treatment: rec.treatment, notes: rec.notes };
+    const { data, error } = await supabase.from('medical_records').insert(payload).select().single();
+    if (!error && data) {
+      set(state => ({ medicalRecords: [...state.medicalRecords, { ...data, petId: data.pet_id, clinicId: data.clinic_id, doctorName: data.doctor_name, recordType: data.record_type }] }));
+    }
+  },
+
+  deleteAdoption: async (id) => {
+    const { error } = await supabase.from('adoptions').delete().eq('id', id);
+    if (!error) set(state => ({ adoptions: state.adoptions.filter(a => a.id !== id) }));
   }
 }));

@@ -75,7 +75,7 @@ export function OwnerLayout() {
 }
 
 function OwnerPets() {
-  const { pets, currentUser, addPet } = useStore();
+  const { pets, currentUser, addPet, medicalRecords, clinics } = useStore();
   const [showModal, setShowModal] = useState(false);
   const myPets = pets.filter(p => p.ownerId === currentUser?.id);
   const [form, setForm] = useState({ name: '', species: 'Perro', breed: '', sex: 'Macho', birth: '', weight: 0, color: '' });
@@ -91,16 +91,48 @@ function OwnerPets() {
   return (
     <div className="content-narrow">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2>Mis Mascotas</h2>
+        <h2>Mis Mascotas e Historial</h2>
         <button className="add" onClick={() => setShowModal(true)}><Plus size={18}/> Registrar Mascota</button>
       </div>
       <div className="grid">
-        {myPets.map(p => (
-          <div className="card" key={p.id}>
-            <b>{p.name}</b> <span>({p.species})</span>
-            <p>Raza: {p.breed} · Peso: {p.weight}kg</p>
-          </div>
-        ))}
+        {myPets.map(p => {
+          const pRecords = medicalRecords.filter(r => r.petId === p.id);
+          return (
+            <div className="card" key={p.id} style={{ gridColumn: '1 / -1' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', paddingBottom: '10px', marginBottom: '10px' }}>
+                <div>
+                  <b style={{ fontSize: '18px' }}>{p.name}</b> <span>({p.species} - {p.breed})</span>
+                  <p style={{ margin: '5px 0', fontSize: '14px', color: '#555' }}>Nacimiento: {p.birth} · Sexo: {p.sex} · Peso: {p.weight}kg</p>
+                </div>
+              </div>
+              
+              <h4 style={{ margin: '15px 0 10px', color: '#0f172a' }}>Historial de Atenciones Clínicas</h4>
+              {pRecords.length === 0 ? (
+                <p style={{ fontSize: '13px', color: '#777' }}>No hay registros médicos para esta mascota todavía.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {pRecords.map(r => {
+                    const clinic = clinics.find(c => c.id === r.clinicId);
+                    return (
+                      <div key={r.id} style={{ background: '#f8fafc', padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <b style={{ color: '#0369a1' }}>{r.recordType}</b>
+                          <small style={{ color: '#64748b' }}>{new Date(r.date).toLocaleDateString()}</small>
+                        </div>
+                        <p style={{ margin: '5px 0', fontSize: '14px' }}><b>Diagnóstico:</b> {r.diagnosis}</p>
+                        {r.treatment && <p style={{ margin: '5px 0', fontSize: '14px' }}><b>Tratamiento:</b> {r.treatment}</p>}
+                        {r.notes && <p style={{ margin: '5px 0', fontSize: '13px', color: '#555', fontStyle: 'italic' }}>"{r.notes}"</p>}
+                        <div style={{ marginTop: '8px', fontSize: '12px', color: '#64748b' }}>
+                          Atendido por <b>Dr/a. {r.doctorName}</b> en <b>{clinic?.name}</b>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
       {showModal && (

@@ -63,3 +63,23 @@ export interface AdoptionPost {
   status: 'AVAILABLE' | 'ADOPTED';
   datePosted: string;
 }
+
+export interface StaffDoctor {
+  id: string;
+  clinicId: string;
+  name: string;
+  specialty?: string;
+  phone?: string;
+}
+
+export interface MedicalRecord {
+  id: string;
+  petId: string;
+  clinicId: string;
+  doctorName: string;
+  recordType: string;
+  diagnosis?: string;
+  treatment?: string;
+  notes?: string;
+  date: string;
+}
