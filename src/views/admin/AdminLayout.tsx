@@ -86,6 +86,9 @@ export function AdminLayout() {
             </div>
           )}
         </div>
+        <footer style={{ marginTop: 'auto', padding: '20px', textAlign: 'center', fontSize: '13px', color: '#71717a' }}>
+          Desarrollado por <a href="https://bastiascid.cl" target="_blank" rel="noreferrer" style={{ color: '#0ea5e9', textDecoration: 'none', fontWeight: 'bold' }}>Cristian Bastias</a>
+        </footer>
       </main>
     </div>
   );

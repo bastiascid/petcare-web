@@ -66,6 +66,9 @@ export function OwnerLayout() {
           <Route path="community" element={<CommunityView />} />
           <Route path="directory" element={<div className="content-narrow"><h2>Directorio Médico</h2><p>Clínicas afiliadas y suscripciones destacadas.</p></div>} />
         </Routes>
+        <footer style={{ marginTop: 'auto', padding: '20px', textAlign: 'center', fontSize: '13px', color: '#71717a' }}>
+          Desarrollado por <a href="https://bastiascid.cl" target="_blank" rel="noreferrer" style={{ color: '#0ea5e9', textDecoration: 'none', fontWeight: 'bold' }}>Cristian Bastias</a>
+        </footer>
       </main>
     </div>
   );

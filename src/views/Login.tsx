@@ -54,6 +54,9 @@ export function Login() {
           </ul>
         </div>
       </form>
+      <div style={{ position: 'absolute', bottom: '20px', textAlign: 'center', width: '100%', fontSize: '13px', color: '#71717a' }}>
+        Desarrollado por <a href="https://bastiascid.cl" target="_blank" rel="noreferrer" style={{ color: '#0ea5e9', textDecoration: 'none', fontWeight: 'bold' }}>Cristian Bastias</a>
+      </div>
     </div>
   );
 }
