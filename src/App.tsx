@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useStore } from './store';
+import { Landing } from './views/Landing';
 import { Login } from './views/Login';
 import { OwnerLayout } from './views/owner/OwnerLayout';
 import { VetLayout } from './views/vet/VetLayout';
@@ -21,16 +22,9 @@ export function App() {
     <BrowserRouter>
       <Routes>
         {/* Rutas Públicas */}
-        <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={currentUser ? <Navigate to={`/${currentUser.role.toLowerCase()}`} /> : <Login />} />
         
-        {/* Redirección principal basada en rol */}
-        <Route path="/" element={
-          !currentUser ? <Navigate to="/login" /> :
-          currentUser.role === 'ADMIN' ? <Navigate to="/admin" /> :
-          currentUser.role === 'VET' ? <Navigate to="/vet" /> :
-          <Navigate to="/owner" />
-        } />
-
         {/* Rutas Privadas */}
         {currentUser?.role === 'OWNER' && (
           <Route path="/owner/*" element={<OwnerLayout />} />

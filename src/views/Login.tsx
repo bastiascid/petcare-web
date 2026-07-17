@@ -12,7 +12,8 @@ export function Login() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (login(email)) {
-      navigate('/');
+      const role = useStore.getState().currentUser?.role;
+      navigate(`/${role?.toLowerCase()}`);
     } else {
       setError(true);
     }
