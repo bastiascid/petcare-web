@@ -80,11 +80,11 @@ function OwnerPets() {
   const myPets = pets.filter(p => p.ownerId === currentUser?.id);
   const [form, setForm] = useState({ name: '', species: 'Perro', breed: '', sex: 'Macho', birth: '', weight: 0, color: '' });
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if(currentUser) {
-      addPet({ ...form, ownerId: currentUser.id });
-      setShowModal(false);
+      try { await addPet({ ...form, ownerId: currentUser.id }); setShowModal(false); }
+      catch (error) { alert(error instanceof Error ? error.message : 'No se pudo registrar la mascota.'); }
     }
   };
 
@@ -195,11 +195,11 @@ function CommunityView() {
   const [showModal, setShowModal] = useState(false);
   const [form, setForm] = useState({ petName: '', species: 'Perro', age: '', description: '', contactPhone: '' });
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     if(currentUser) {
-      addAdoption({ ...form, creatorId: currentUser.id });
-      setShowModal(false);
+      try { await addAdoption({ ...form, creatorId: currentUser.id }); setShowModal(false); }
+      catch (error) { alert(error instanceof Error ? error.message : 'No se pudo publicar la adopción.'); }
     }
   };
 

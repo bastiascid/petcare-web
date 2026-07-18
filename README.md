@@ -1,60 +1,43 @@
-# PETCARE · Portal web
+# PETCARE PRO
 
-Aplicación web responsive para gestión de mascotas, cuidados sanitarios, agenda y directorio. Está construida con React, TypeScript y Vite, y guarda los datos operativos del usuario en `localStorage` para que las altas y reservas sobrevivan a una recarga.
+Portal web para dueños de mascotas, clínicas veterinarias y administración. Implementado con React, TypeScript, Vite y Supabase (Auth + Postgres).
 
-## Ejecución
+## Desarrollo local
 
 ```powershell
 npm install
+Copy-Item .env.example .env
 npm run dev
 ```
 
-Para crear el paquete optimizado:
+Completa en `.env` los valores de `VITE_SUPABASE_URL` y `VITE_SUPABASE_ANON_KEY`. No uses ni expongas `SUPABASE_SERVICE_ROLE_KEY` en el frontend.
+
+Para validar el artefacto de producción:
 
 ```powershell
 npm run build
 ```
 
-## Capacidades implementadas
+## Seguridad y despliegue
 
-- Inicio con indicadores, próximos cuidados y acceso a fichas.
-- Gestión de múltiples mascotas: registro y ficha con datos clínicos básicos.
-- Historial sanitario y registro de notas/cuidos.
-- Calendario sanitario derivado de los recordatorios.
-- Agenda: creación y visualización de reservas.
-- Directorio de servicios con interfaz preparada para un proveedor de geolocalización.
-- Tema oscuro, diseño responsive y persistencia local.
+1. Ejecuta [supabase/migrations/202607180001_security.sql](supabase/migrations/202607180001_security.sql) en el SQL Editor de Supabase. Activa RLS y crea perfiles desde `auth.users`.
+2. Despliega las invitaciones administrativas:
 
-## Arquitectura objetivo para producción
+   ```powershell
+   supabase functions deploy invite-user
+   ```
 
-```mermaid
-flowchart LR
-  W[React Web / React Admin] --> G[NGINX API gateway]
-  A[Flutter Android] --> G
-  G --> L[Laravel 12 REST API]
-  L --> M[(MySQL 8)]
-  L --> R[(Redis)]
-  L --> Q[Queue workers]
-  Q --> N[Push / email / SMS / WhatsApp]
-  L --> S[Object storage]
-```
+   Configura `SUPABASE_SERVICE_ROLE_KEY` únicamente como secreto de esa función.
+3. Crea o migra usuarios usando Supabase Auth. Cada `public.users.id` debe ser el mismo UUID de `auth.users.id`. Las cuentas anteriores basadas solo en email no son un mecanismo de acceso válido.
+4. En **Authentication > Providers > Email**, activa confirmación de correo, rate limiting y protección contra contraseñas filtradas.
+5. En Vercel, configura las dos variables `VITE_*` en Production, Preview y Development. El proyecto ya dispone de la reescritura SPA necesaria.
 
-El frontend entregado es el portal de dueños y la base visual reutilizable para los restantes roles. Para completar el sistema distribuido solicitado se requiere provisionar los servicios externos y secretos de cada ambiente: MySQL, Redis, Firebase, Google Maps, proveedores de correo/SMS/WhatsApp y las credenciales OAuth. El equipo local actual no dispone de PHP/Composer ni Flutter, por lo que no es posible compilar ni verificar un backend Laravel o APK/AAB reales desde este entorno.
+La aplicación protege las pantallas por rol (`OWNER`, `VET`, `ADMIN`) y la migración aplica el aislamiento de datos mediante RLS. La base de datos es la capa de autorización definitiva.
 
-## Modelo de dominio recomendado
+## Capacidades
 
-| Dominio | Entidades principales |
-| --- | --- |
-| Identidad | users, roles, permissions, organizations, invitations |
-| Mascotas | pets, pet_members, weight_entries, feeding_plans, allergies |
-| Clínica | clinical_records, vaccinations, treatments, prescriptions, attachments |
-| Agenda | providers, services, availability_slots, appointments |
-| Alertas | care_plans, reminders, notification_logs |
-| Directorio | places, place_categories, opening_hours, reviews |
-| Auditoría | audit_logs, login_events, exports |
-
-## API REST propuesta
-
-`/api/v1/auth`, `/api/v1/pets`, `/api/v1/pets/{pet}/medical-records`, `/api/v1/pets/{pet}/weights`, `/api/v1/reminders`, `/api/v1/appointments`, `/api/v1/providers`, `/api/v1/directory`, `/api/v1/notifications`.
-
-Cada recurso debe aplicar autorización por rol y pertenencia familiar/organizacional, validación de entrada, paginación, rate limiting y eventos de auditoría. OpenAPI debe publicarse desde Laravel como contrato único para web y Flutter.
+- Sesión persistente y login con Supabase Auth.
+- Panel de dueño: mascotas, historial clínico, calendario y adopciones.
+- Panel veterinario: CRM, staff, fichas clínicas y alertas.
+- Panel administrativo: usuarios, clínicas, planes y moderación.
+- Manejo visible de errores de carga y escritura.

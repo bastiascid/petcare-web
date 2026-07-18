@@ -24,16 +24,16 @@ export function AdminLayout() {
 
   const totalIngresos = clinics.filter(c => c.subscription === 'PREMIUM').length * 29.99 + clinics.filter(c => c.subscription === 'PRO').length * 19.99;
 
-  const handleAddClinic = (e: React.FormEvent) => {
+  const handleAddClinic = async (e: React.FormEvent) => {
     e.preventDefault();
-    addClinic({ ...clinicForm, subscription: clinicForm.subscription as any });
-    setShowClinicModal(false);
+    try { await addClinic({ ...clinicForm, subscription: clinicForm.subscription as any }); setShowClinicModal(false); }
+    catch (error) { alert(error instanceof Error ? error.message : 'No se pudo crear la clínica.'); }
   };
 
-  const handleAddUser = (e: React.FormEvent) => {
+  const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    addUser(userForm);
-    setShowUserModal(false);
+    try { await addUser(userForm); setShowUserModal(false); }
+    catch (error) { alert(error instanceof Error ? error.message : 'No se pudo invitar al usuario.'); }
   };
 
   return (
@@ -105,7 +105,7 @@ export function AdminLayout() {
                       <td>
                         <select 
                           value={c.subscription} 
-                          onChange={(e) => updateClinicSubscription(c.id, e.target.value as any)}
+                          onChange={(e) => { void updateClinicSubscription(c.id, e.target.value as any).catch(error => alert(error instanceof Error ? error.message : 'No se pudo actualizar el plan.')); }}
                           style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px' }}
                         >
                           <option value="FREE">FREE</option>
@@ -114,7 +114,7 @@ export function AdminLayout() {
                         </select>
                       </td>
                       <td>
-                        <button onClick={() => {if(confirm('¿Eliminar clínica?')) deleteClinic(c.id)}} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
+                        <button onClick={() => { if (confirm('¿Eliminar clínica?')) void deleteClinic(c.id).catch(error => alert(error instanceof Error ? error.message : 'No se pudo eliminar la clínica.')); }} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
                       </td>
                     </tr>
                   ))}
@@ -146,7 +146,7 @@ export function AdminLayout() {
                       <td>
                         <select 
                           value={u.role} 
-                          onChange={(e) => updateUserRole(u.id, e.target.value as Role)}
+                          onChange={(e) => { void updateUserRole(u.id, e.target.value as Role).catch(error => alert(error instanceof Error ? error.message : 'No se pudo actualizar el rol.')); }}
                           style={{ padding: '4px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px' }}
                           disabled={u.id === currentUser?.id}
                         >
@@ -156,7 +156,7 @@ export function AdminLayout() {
                         </select>
                       </td>
                       <td>
-                        <button disabled={u.id === currentUser?.id} onClick={() => {if(confirm('¿Eliminar usuario?')) deleteUser(u.id)}} style={{ background: 'transparent', border: 'none', color: u.id === currentUser?.id ? '#ccc' : '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
+                        <button disabled={u.id === currentUser?.id} onClick={() => { if (confirm('¿Eliminar usuario?')) void deleteUser(u.id).catch(error => alert(error instanceof Error ? error.message : 'No se pudo eliminar el usuario.')); }} style={{ background: 'transparent', border: 'none', color: u.id === currentUser?.id ? '#ccc' : '#ef4444', cursor: 'pointer' }}><Trash2 size={18} /></button>
                       </td>
                     </tr>
                   ))}
@@ -173,7 +173,7 @@ export function AdminLayout() {
                   <div className="card" key={a.id} style={{ border: '1px solid #e4e4e7', boxShadow: 'none' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                       <b>{a.petName}</b>
-                      <button onClick={() => {if(confirm('¿Borrar publicación?')) deleteAdoption(a.id)}} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16} /></button>
+                      <button onClick={() => { if (confirm('¿Borrar publicación?')) void deleteAdoption(a.id).catch(error => alert(error instanceof Error ? error.message : 'No se pudo eliminar la publicación.')); }} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer' }}><Trash2 size={16} /></button>
                     </div>
                     <p style={{ margin: '10px 0', fontSize: '14px', color: '#555' }}>{a.description}</p>
                     <small>Contacto: {a.contactPhone}</small>

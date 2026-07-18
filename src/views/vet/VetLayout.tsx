@@ -31,24 +31,23 @@ export function VetLayout() {
     { label: 'Enviar Alertas', icon: Send }
   ];
 
-  const handleAddClient = (e: React.FormEvent) => {
+  const handleAddClient = async (e: React.FormEvent) => {
     e.preventDefault();
-    addUser(clientForm);
-    alert('Cliente creado exitosamente. Ahora puedes registrar a su mascota usando su ID de usuario.');
-    setShowClientModal(false);
+    try { await addUser(clientForm); alert('Invitación enviada exitosamente.'); setShowClientModal(false); }
+    catch (error) { alert(error instanceof Error ? error.message : 'No se pudo invitar al cliente.'); }
   };
 
-  const handleAddStaff = (e: React.FormEvent) => {
+  const handleAddStaff = async (e: React.FormEvent) => {
     e.preventDefault();
-    if(clinic) addDoctor({ ...staffForm, clinicId: clinic.id });
-    setShowStaffModal(false);
+    if(clinic) try { await addDoctor({ ...staffForm, clinicId: clinic.id }); setShowStaffModal(false); }
+    catch (error) { alert(error instanceof Error ? error.message : 'No se pudo agregar el médico.'); }
   };
 
-  const handleAddRecord = (e: React.FormEvent) => {
+  const handleAddRecord = async (e: React.FormEvent) => {
     e.preventDefault();
     if(clinic && selectedPet) {
-      addMedicalRecord({ ...recordForm, clinicId: clinic.id, petId: selectedPet });
-      setShowRecordModal(false);
+      try { await addMedicalRecord({ ...recordForm, clinicId: clinic.id, petId: selectedPet }); setShowRecordModal(false); }
+      catch (error) { alert(error instanceof Error ? error.message : 'No se pudo guardar la ficha clínica.'); }
     }
   };
 
@@ -122,7 +121,7 @@ export function VetLayout() {
                   <div className="card" key={s.id}>
                     <b>Dr/a. {s.name}</b>
                     <p style={{ margin: '8px 0', fontSize: '14px', color: '#555' }}>Especialidad: {s.specialty || 'General'}</p>
-                    <button className="link" style={{ color: '#ef4444' }} onClick={() => {if(confirm('¿Remover médico?')) deleteDoctor(s.id)}}>Remover</button>
+                    <button className="link" style={{ color: '#ef4444' }} onClick={() => { if (confirm('¿Remover médico?')) void deleteDoctor(s.id).catch(error => alert(error instanceof Error ? error.message : 'No se pudo remover el médico.')); }}>Remover</button>
                   </div>
                 ))}
                 {myStaff.length === 0 && <p style={{ color: '#777' }}>No has agregado médicos a tu staff.</p>}
@@ -231,15 +230,14 @@ export function VetLayout() {
   );
 }
 
-function SendAlerts({ clinicId, patients }: { clinicId: string; patients: any[] }) {
+function SendAlerts({ clinicId, patients }: { clinicId: string; patients: { id: string; ownerId: string; name: string }[] }) {
   const { addAlert } = useStore();
   const [form, setForm] = useState({ receiverId: '', title: '', message: '' });
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    addAlert({ ...form, senderId: clinicId, read: false });
-    alert('Alerta enviada exitosamente');
-    setForm({ receiverId: '', title: '', message: '' });
+    try { await addAlert({ ...form, senderId: clinicId, read: false }); alert('Alerta enviada exitosamente'); setForm({ receiverId: '', title: '', message: '' }); }
+    catch (error) { alert(error instanceof Error ? error.message : 'No se pudo enviar la alerta.'); }
   };
 
   return (
