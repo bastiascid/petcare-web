@@ -34,6 +34,11 @@ export function Login() {
       <label style={{ display: 'block', marginBottom: '16px', fontSize: '14px', fontWeight: 500 }}>Correo electrónico<input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7' }} required autoComplete="email" placeholder="ejemplo@mail.com" /></label>
       <label style={{ display: 'block', marginBottom: '16px', fontSize: '14px', fontWeight: 500 }}>Contraseña<input type="password" value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7' }} required autoComplete="current-password" /></label>
       <button type="submit" disabled={submitting} style={{ width: '100%', padding: '12px', background: '#0ea5e9', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: submitting ? 'wait' : 'pointer', opacity: submitting ? .7 : 1 }}>{submitting ? 'Ingresando…' : 'Ingresar'}</button>
+      
+      <div style={{ marginTop: '20px', textAlign: 'center', fontSize: '14px', color: '#71717a' }}>
+        ¿No tienes cuenta?{' '}
+        <Link to="/register" style={{ color: '#0ea5e9', textDecoration: 'none', fontWeight: 'bold' }}>Regístrate aquí</Link>
+      </div>
     </form>
   </div>;
 }

@@ -25,6 +25,7 @@ interface AppState {
   isLoading: boolean; error: string | null;
   initialize: () => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, fullName: string, role: Role) => Promise<void>;
   logout: () => Promise<void>;
   clearError: () => void;
   fetchData: () => Promise<void>;
@@ -63,6 +64,23 @@ export const useStore = create<AppState>((set, get) => ({
       set({ session, currentUser: profile, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ currentUser: null, session: null, isLoading: false, error: message(error) }); throw error; }
+  },
+  register: async (email, password, fullName, role) => {
+    set({ isLoading: true, error: null });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName, role }
+        }
+      });
+      if (error) throw new Error(error.message);
+      if (!data.session) throw new Error('Por favor revisa tu correo para confirmar tu cuenta.');
+      const profile = requireSuccess(await supabase.from('users').select('*').eq('auth_id', data.user!.id).single(), 'Perfil en proceso de creación...');
+      set({ session: data.session, currentUser: profile, isLoading: false });
+      await get().fetchData();
+    } catch (error) { set({ isLoading: false, error: message(error) }); throw error; }
   },
   logout: async () => { const { error } = await supabase.auth.signOut(); if (error) throw new Error(error.message); set({ currentUser: null, session: null, users: [], clinics: [], pets: [], alerts: [], adoptions: [], appointments: [], medicalRecords: [], staffDoctors: [] }); },
   fetchData: async () => {

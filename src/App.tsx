@@ -5,6 +5,7 @@ import type { Role } from './types';
 import { supabase } from './lib/supabase';
 import { Landing } from './views/Landing';
 import { Login } from './views/Login';
+import { Register } from './views/Register';
 import { OwnerLayout } from './views/owner/OwnerLayout';
 import { VetLayout } from './views/vet/VetLayout';
 import { AdminLayout } from './views/admin/AdminLayout';
@@ -29,6 +30,7 @@ export function App() {
         {/* Rutas Públicas */}
         <Route path="/" element={<Landing />} />
         <Route path="/login" element={currentUser ? <Navigate to={`/${currentUser.role.toLowerCase()}`} /> : <Login />} />
+        <Route path="/register" element={currentUser ? <Navigate to={`/${currentUser.role.toLowerCase()}`} /> : <Register />} />
         
         {/* Rutas Privadas */}
         <Route element={<RequireRole role="OWNER" />}><Route path="/owner/*" element={<OwnerLayout />} /></Route>

@@ -50,8 +50,23 @@
   justify-content: space-between;
   padding: 6rem 5%;
   min-height: 80vh;
-  background: radial-gradient(circle at top right, #e0f2fe 0%, #fafafa 50%);
+  background: url('/landing-bg.png') center/cover no-repeat;
   gap: 4rem;
+  position: relative;
+}
+
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(8px);
+  z-index: 0;
+}
+
+.hero-content, .hero-graphic {
+  position: relative;
+  z-index: 1;
 }
 
 .hero-content {
