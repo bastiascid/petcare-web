@@ -23,11 +23,11 @@ export function Login() {
     } finally { setSubmitting(false); }
   };
 
-  return <div className="login-screen" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'url("/login-bg.png") center/cover no-repeat', position: 'relative' }}>
+  return <div className="login-screen" style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'url("/login-bg.png") center/cover no-repeat', position: 'relative', padding: '1rem' }}>
     <Link to="/" style={{ position: 'absolute', top: '24px', left: '24px', display: 'flex', alignItems: 'center', gap: '8px', color: '#fff', textDecoration: 'none', fontWeight: 'bold', textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>
       <ArrowLeft size={20} /> Volver al Inicio
     </Link>
-    <form onSubmit={handleLogin} style={{ background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(12px)', padding: '32px', borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.1)', width: '340px' }}>
+    <form onSubmit={handleLogin} style={{ background: 'rgba(255, 255, 255, 0.85)', backdropFilter: 'blur(12px)', padding: '32px', borderRadius: '16px', boxShadow: '0 8px 32px rgba(0,0,0,0.1)', width: '100%', maxWidth: '340px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px', color: '#18181b', fontWeight: 'bold', fontSize: '20px' }}><PawPrint color="#0ea5e9" /> PETCARE PRO</div>
       <p style={{ color: '#71717a', marginBottom: '24px', fontSize: '14px' }}>Inicia sesión en tu cuenta para continuar.</p>
       {error && <p role="alert" style={{ color: '#b91c1c', fontSize: '13px', marginBottom: '12px' }}>{error}</p>}

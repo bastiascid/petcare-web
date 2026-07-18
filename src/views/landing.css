@@ -316,10 +316,36 @@
     flex-direction: column;
     padding: 3rem 5%;
     text-align: center;
+    gap: 2rem;
+  }
+  
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
   }
   
   .hero-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .hero-actions button {
+    width: 100%;
     justify-content: center;
+  }
+  
+  .landing-services h2, .advantages-content h2 {
+    font-size: 2rem;
+  }
+
+  .advantages-list li {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
   }
   
   .landing-footer {
