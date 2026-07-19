@@ -48,7 +48,7 @@ export const useStore = create<AppState>((set, get) => ({
       if (authResult.error) throw new Error(authResult.error.message);
       const session = authResult.data.session;
       if (!session) { set({ currentUser: null, session: null, isLoading: false }); return; }
-      const profile = requireSuccess(await supabase.from('users').select('*').eq('auth_id', session.user.id).single(), 'No existe un perfil para esta cuenta.');
+      const profile = requireSuccess(await supabase.from('users').select('*').eq('id', session.user.id).single(), 'No existe un perfil para esta cuenta.');
       set({ currentUser: profile, session, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ currentUser: null, session: null, isLoading: false, error: message(error) }); }
@@ -60,7 +60,7 @@ export const useStore = create<AppState>((set, get) => ({
       if (result.error) throw new Error(result.error.message);
       const session = result.data.session;
       if (!session) throw new Error('No se recibió una sesión válida.');
-      const profile = requireSuccess(await supabase.from('users').select('*').eq('auth_id', session.user.id).single(), 'Esta cuenta no tiene un perfil PETCARE asociado.');
+      const profile = requireSuccess(await supabase.from('users').select('*').eq('id', session.user.id).single(), 'Esta cuenta no tiene un perfil PETCARE asociado.');
       set({ session, currentUser: profile, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ currentUser: null, session: null, isLoading: false, error: message(error) }); throw error; }
@@ -77,7 +77,7 @@ export const useStore = create<AppState>((set, get) => ({
       });
       if (error) throw new Error(error.message);
       if (!data.session) throw new Error('Por favor revisa tu correo para confirmar tu cuenta.');
-      const profile = requireSuccess(await supabase.from('users').select('*').eq('auth_id', data.user!.id).single(), 'Perfil en proceso de creación...');
+      const profile = requireSuccess(await supabase.from('users').select('*').eq('id', data.user!.id).single(), 'Perfil en proceso de creación...');
       set({ session: data.session, currentUser: profile, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ isLoading: false, error: message(error) }); throw error; }

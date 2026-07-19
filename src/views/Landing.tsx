@@ -58,21 +58,30 @@ export function Landing() {
       {/* Services Section */}
       <section className="landing-services">
         <h2>Servicios que ofrecemos</h2>
-        <div className="services-grid">
+        <div className="services-carousel">
           <div className="service-card">
-            <div className="service-icon"><Stethoscope size={24} /></div>
-            <h3>Agendamiento Rápido</h3>
-            <p>Reserva citas con tu veterinario de confianza en un par de clics, sin llamadas ni esperas.</p>
+            <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=400&h=200" alt="Perro en veterinaria" className="service-img" />
+            <div className="service-content">
+              <div className="service-icon"><Stethoscope size={24} /></div>
+              <h3>Agendamiento Rápido</h3>
+              <p>Reserva citas con tu veterinario de confianza en un par de clics, sin llamadas ni esperas.</p>
+            </div>
           </div>
           <div className="service-card">
-            <div className="service-icon"><Shield size={24} /></div>
-            <h3>Historial Médico</h3>
-            <p>Accede al registro de vacunas, alergias y peso de tus mascotas desde cualquier dispositivo.</p>
+            <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?auto=format&fit=crop&q=80&w=400&h=200" alt="Dueño y mascota" className="service-img" />
+            <div className="service-content">
+              <div className="service-icon"><Shield size={24} /></div>
+              <h3>Historial Médico</h3>
+              <p>Accede al registro de vacunas, alergias y peso de tus mascotas desde cualquier dispositivo.</p>
+            </div>
           </div>
           <div className="service-card">
-            <div className="service-icon"><Heart size={24} /></div>
-            <h3>Red de Adopción</h3>
-            <p>Encuentra a tu próximo mejor amigo o ayuda a mascotas a encontrar un hogar amoroso.</p>
+            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400&h=200" alt="Cachorro feliz" className="service-img" />
+            <div className="service-content">
+              <div className="service-icon"><Heart size={24} /></div>
+              <h3>Red de Adopción</h3>
+              <p>Encuentra a tu próximo mejor amigo o ayuda a mascotas a encontrar un hogar amoroso.</p>
+            </div>
           </div>
         </div>
       </section>
