@@ -5,29 +5,51 @@ import './landing.css';
 
 export function Landing() {
   const navigate = useNavigate();
-  const carouselRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    let animationFrameId: number;
-    
-    const scroll = () => {
-      if (carouselRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        
-        // If we reach the end, reset to the beginning smoothly
-        if (scrollLeft >= scrollWidth - clientWidth - 1) {
-          carouselRef.current.scrollTo({ left: 0, behavior: 'auto' });
-        } else {
-          // Scroll continuously by 1 pixel per frame
-          carouselRef.current.scrollBy({ left: 1, behavior: 'auto' });
-        }
-      }
-      animationFrameId = requestAnimationFrame(scroll);
-    };
-
-    animationFrameId = requestAnimationFrame(scroll);
-    return () => cancelAnimationFrame(animationFrameId);
-  }, []);
+  const ServiceCards = () => (
+    <>
+      <div className="service-card">
+        <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=400&h=200" alt="Perro en veterinaria" className="service-img" />
+        <div className="service-content">
+          <div className="service-icon"><Stethoscope size={24} /></div>
+          <h3>Agendamiento Rápido</h3>
+          <p>Reserva citas con tu veterinario de confianza en un par de clics, sin llamadas ni esperas.</p>
+        </div>
+      </div>
+      <div className="service-card">
+        <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?auto=format&fit=crop&q=80&w=400&h=200" alt="Dueño y mascota" className="service-img" />
+        <div className="service-content">
+          <div className="service-icon"><Shield size={24} /></div>
+          <h3>Historial Médico</h3>
+          <p>Accede al registro de vacunas, alergias y peso de tus mascotas desde cualquier dispositivo.</p>
+        </div>
+      </div>
+      <div className="service-card">
+        <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400&h=200" alt="Cachorro feliz" className="service-img" />
+        <div className="service-content">
+          <div className="service-icon"><Heart size={24} /></div>
+          <h3>Red de Adopción</h3>
+          <p>Encuentra a tu próximo mejor amigo o ayuda a mascotas a encontrar un hogar amoroso.</p>
+        </div>
+      </div>
+      <div className="service-card">
+        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400&h=200" alt="Veterinario trabajando" className="service-img" />
+        <div className="service-content">
+          <div className="service-icon"><Activity size={24} /></div>
+          <h3>CRM para Clínicas</h3>
+          <p>Gestión completa de pacientes, inventario y finanzas diseñada específicamente para centros veterinarios.</p>
+        </div>
+      </div>
+      <div className="service-card">
+        <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&q=80&w=400&h=200" alt="Comunidad de mascotas" className="service-img" />
+        <div className="service-content">
+          <div className="service-icon"><Users size={24} /></div>
+          <h3>Ventajas del Mercado</h3>
+          <p>Únete a la red más grande de profesionales y dueños de mascotas. Mayor visibilidad y clientes para tu clínica.</p>
+        </div>
+      </div>
+    </>
+  );
 
   return (
     <div className="landing-container">
@@ -75,48 +97,12 @@ export function Landing() {
       <section className="landing-services">
         <h2>Servicios que ofrecemos</h2>
         <div className="services-carousel-wrapper">
-          <div className="services-carousel" ref={carouselRef}>
-            <div className="service-card">
-            <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=400&h=200" alt="Perro en veterinaria" className="service-img" />
-            <div className="service-content">
-              <div className="service-icon"><Stethoscope size={24} /></div>
-              <h3>Agendamiento Rápido</h3>
-              <p>Reserva citas con tu veterinario de confianza en un par de clics, sin llamadas ni esperas.</p>
+          <div className="services-carousel">
+            <div className="marquee-track">
+              <ServiceCards />
+              <ServiceCards />
             </div>
           </div>
-          <div className="service-card">
-            <img src="https://images.unsplash.com/photo-1541364983171-a8ba01e95cfc?auto=format&fit=crop&q=80&w=400&h=200" alt="Dueño y mascota" className="service-img" />
-            <div className="service-content">
-              <div className="service-icon"><Shield size={24} /></div>
-              <h3>Historial Médico</h3>
-              <p>Accede al registro de vacunas, alergias y peso de tus mascotas desde cualquier dispositivo.</p>
-            </div>
-          </div>
-          <div className="service-card">
-            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=400&h=200" alt="Cachorro feliz" className="service-img" />
-            <div className="service-content">
-              <div className="service-icon"><Heart size={24} /></div>
-              <h3>Red de Adopción</h3>
-              <p>Encuentra a tu próximo mejor amigo o ayuda a mascotas a encontrar un hogar amoroso.</p>
-            </div>
-          </div>
-          <div className="service-card">
-            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400&h=200" alt="Veterinario trabajando" className="service-img" />
-            <div className="service-content">
-              <div className="service-icon"><Activity size={24} /></div>
-              <h3>CRM para Clínicas</h3>
-              <p>Gestión completa de pacientes, inventario y finanzas diseñada específicamente para centros veterinarios.</p>
-            </div>
-          </div>
-          <div className="service-card">
-            <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&q=80&w=400&h=200" alt="Comunidad de mascotas" className="service-img" />
-            <div className="service-content">
-              <div className="service-icon"><Users size={24} /></div>
-              <h3>Ventajas del Mercado</h3>
-              <p>Únete a la red más grande de profesionales y dueños de mascotas. Mayor visibilidad y clientes para tu clínica.</p>
-            </div>
-          </div>
-        </div>
         </div>
       </section>
 

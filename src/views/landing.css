@@ -240,21 +240,31 @@
 
 .services-carousel-wrapper {
   width: 100%;
-  display: flex;
-  justify-content: center;
+  overflow: hidden;
+  position: relative;
 }
 
 .services-carousel {
+  width: 100%;
+  overflow: hidden;
+  padding-bottom: 2rem;
+}
+
+.marquee-track {
   display: flex;
   gap: 2rem;
-  overflow-x: auto;
-  padding: 1rem;
-  padding-bottom: 2rem;
-  scrollbar-width: none; 
-  max-width: 1200px;
+  width: max-content;
+  animation: scrollMarquee 30s linear infinite;
+  padding: 1rem 0;
 }
-.services-carousel::-webkit-scrollbar {
-  display: none;
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollMarquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 1rem)); } /* -50% shifts exactly half the track, -1rem accounts for half the gap */
 }
 
 .service-card {
