@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { PawPrint, ArrowLeft } from 'lucide-react';
+import { PawPrint, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { useStore } from '../store';
 import type { Role } from '../types';
 
@@ -8,6 +8,9 @@ export function Register() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [role, setRole] = useState<Role>('OWNER');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -17,10 +20,13 @@ export function Register() {
 
   const handleRegister = async (event: React.FormEvent) => {
     event.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden. Por favor, verifica.');
+      return;
+    }
     setSubmitting(true); setError(null);
     try {
       await register(email, password, fullName, role);
-      // Depending on email confirmation settings, they might be logged in or not.
       const userRole = useStore.getState().currentUser?.role;
       if (userRole) {
         navigate(`/${userRole.toLowerCase()}`, { replace: true });
@@ -41,19 +47,33 @@ export function Register() {
       {error && <p role="alert" style={{ color: '#b91c1c', fontSize: '13px', marginBottom: '12px' }}>{error}</p>}
       
       <label style={{ display: 'block', marginBottom: '12px', fontSize: '14px', fontWeight: 500 }}>Nombre Completo
-        <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7' }} required placeholder="Ej. Juan Pérez" />
+        <input type="text" value={fullName} onChange={e => setFullName(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7', boxSizing: 'border-box' }} required placeholder="Ej. Juan Pérez" />
       </label>
       
       <label style={{ display: 'block', marginBottom: '12px', fontSize: '14px', fontWeight: 500 }}>Correo electrónico
-        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7' }} required autoComplete="email" placeholder="ejemplo@mail.com" />
+        <input type="email" value={email} onChange={e => setEmail(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7', boxSizing: 'border-box' }} required autoComplete="email" placeholder="ejemplo@mail.com" />
       </label>
       
       <label style={{ display: 'block', marginBottom: '12px', fontSize: '14px', fontWeight: 500 }}>Contraseña
-        <input type="password" value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7' }} required autoComplete="new-password" />
+        <div style={{ position: 'relative', marginTop: '6px' }}>
+          <input type={showPassword ? 'text' : 'password'} value={password} onChange={e => setPassword(e.target.value)} style={{ width: '100%', padding: '10px', paddingRight: '40px', borderRadius: '8px', border: '1px solid #e4e4e7', boxSizing: 'border-box' }} required autoComplete="new-password" />
+          <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 0, display: 'flex', alignItems: 'center' }}>
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
+      </label>
+      
+      <label style={{ display: 'block', marginBottom: '12px', fontSize: '14px', fontWeight: 500 }}>Confirmar Contraseña
+        <div style={{ position: 'relative', marginTop: '6px' }}>
+          <input type={showConfirmPassword ? 'text' : 'password'} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} style={{ width: '100%', padding: '10px', paddingRight: '40px', borderRadius: '8px', border: '1px solid #e4e4e7', boxSizing: 'border-box' }} required autoComplete="new-password" />
+          <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: '#71717a', padding: 0, display: 'flex', alignItems: 'center' }}>
+            {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </button>
+        </div>
       </label>
       
       <label style={{ display: 'block', marginBottom: '16px', fontSize: '14px', fontWeight: 500 }}>Tipo de Cuenta
-        <select value={role} onChange={e => setRole(e.target.value as Role)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7', background: '#fff' }}>
+        <select value={role} onChange={e => setRole(e.target.value as Role)} style={{ width: '100%', marginTop: '6px', padding: '10px', borderRadius: '8px', border: '1px solid #e4e4e7', background: '#fff', boxSizing: 'border-box' }}>
           <option value="OWNER">Dueño de Mascota</option>
           <option value="VET">Clínica / Veterinario</option>
         </select>
