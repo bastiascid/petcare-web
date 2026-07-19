@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PawPrint, Calendar, Heart, Shield, ChevronRight, Stethoscope, Activity, Users } from 'lucide-react';
 import './landing.css';
 
 export function Landing() {
   const navigate = useNavigate();
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (carouselRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
+        // If we reached the end, loop back to the start
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        } else {
+          // Scroll to the next card (roughly 350px max-width + gap)
+          carouselRef.current.scrollBy({ left: 380, behavior: 'smooth' });
+        }
+      }
+    }, 4000); // 4 seconds per slide
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="landing-container">
@@ -52,7 +70,7 @@ export function Landing() {
       <section className="landing-services">
         <h2>Servicios que ofrecemos</h2>
         <div className="services-carousel-wrapper">
-          <div className="services-carousel">
+          <div className="services-carousel" ref={carouselRef}>
             <div className="service-card">
             <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=400&h=200" alt="Perro en veterinaria" className="service-img" />
             <div className="service-content">
