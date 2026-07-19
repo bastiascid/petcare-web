@@ -163,6 +163,23 @@
   animation: fadeInUp 0.8s ease-out 0.2s both;
 }
 
+.pet-banner-img {
+  border-radius: 16px;
+  object-fit: cover;
+  height: 200px;
+  flex: 1;
+  min-width: 200px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+}
+
+.pet-banner-img:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
 /* Glassmorphism card */
 .glass-card {
   background: rgba(255, 255, 255, 0.7);

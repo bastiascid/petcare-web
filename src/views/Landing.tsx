@@ -50,9 +50,9 @@ export function Landing() {
 
       {/* Friendly Pets Banner */}
       <div style={{ display: 'flex', gap: '1rem', padding: '0 5%', marginTop: '-2rem', overflowX: 'auto', paddingBottom: '2rem' }}>
-        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300&h=200" alt="Gato" style={{ borderRadius: '16px', objectFit: 'cover', height: '200px', flex: 1, minWidth: '200px', opacity: 0.9 }} />
-        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=300&h=200" alt="Perrito" style={{ borderRadius: '16px', objectFit: 'cover', height: '200px', flex: 1, minWidth: '200px', opacity: 0.9 }} />
-        <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&q=80&w=300&h=200" alt="Mascotas" style={{ borderRadius: '16px', objectFit: 'cover', height: '200px', flex: 1, minWidth: '200px', opacity: 0.9 }} />
+        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300&h=200" alt="Gato" className="pet-banner-img" />
+        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=300&h=200" alt="Perrito" className="pet-banner-img" />
+        <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&q=80&w=300&h=200" alt="Mascotas" className="pet-banner-img" />
       </div>
 
       {/* Services Section */}
