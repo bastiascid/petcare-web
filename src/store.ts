@@ -48,7 +48,15 @@ export const useStore = create<AppState>((set, get) => ({
       if (authResult.error) throw new Error(authResult.error.message);
       const session = authResult.data.session;
       if (!session) { set({ currentUser: null, session: null, isLoading: false }); return; }
-      const profile = requireSuccess(await supabase.from('users').select('*').eq('id', session.user.id).single(), 'No existe un perfil para esta cuenta.');
+      
+      const { data: profile, error } = await supabase.from('users').select('*').eq('id', session.user.id).maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!profile) {
+        await supabase.auth.signOut();
+        set({ currentUser: null, session: null, isLoading: false });
+        return;
+      }
+      
       set({ currentUser: profile, session, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ currentUser: null, session: null, isLoading: false, error: message(error) }); }
@@ -60,7 +68,11 @@ export const useStore = create<AppState>((set, get) => ({
       if (result.error) throw new Error(result.error.message);
       const session = result.data.session;
       if (!session) throw new Error('No se recibió una sesión válida.');
-      const profile = requireSuccess(await supabase.from('users').select('*').eq('id', session.user.id).single(), 'Esta cuenta no tiene un perfil PETCARE asociado.');
+      
+      const { data: profile, error } = await supabase.from('users').select('*').eq('id', session.user.id).maybeSingle();
+      if (error) throw new Error(error.message);
+      if (!profile) throw new Error('Esta cuenta está dañada o no tiene un perfil asociado. Por favor, regístrate nuevamente.');
+      
       set({ session, currentUser: profile, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ currentUser: null, session: null, isLoading: false, error: message(error) }); throw error; }
@@ -77,7 +89,11 @@ export const useStore = create<AppState>((set, get) => ({
       });
       if (error) throw new Error(error.message);
       if (!data.session) throw new Error('Por favor revisa tu correo para confirmar tu cuenta.');
-      const profile = requireSuccess(await supabase.from('users').select('*').eq('id', data.user!.id).single(), 'Perfil en proceso de creación...');
+      
+      const { data: profile, error: profileError } = await supabase.from('users').select('*').eq('id', data.user!.id).maybeSingle();
+      if (profileError) throw new Error(profileError.message);
+      if (!profile) throw new Error('Ocurrió un error al crear tu perfil en la base de datos. Asegúrate de haber ejecutado el código SQL en Supabase.');
+      
       set({ session: data.session, currentUser: profile, isLoading: false });
       await get().fetchData();
     } catch (error) { set({ isLoading: false, error: message(error) }); throw error; }

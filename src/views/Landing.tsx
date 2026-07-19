@@ -8,20 +8,25 @@ export function Landing() {
   const carouselRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    let animationFrameId: number;
+    
+    const scroll = () => {
       if (carouselRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = carouselRef.current;
-        // If we reached the end, loop back to the start
-        if (scrollLeft + clientWidth >= scrollWidth - 10) {
-          carouselRef.current.scrollTo({ left: 0, behavior: 'smooth' });
+        
+        // If we reach the end, reset to the beginning smoothly
+        if (scrollLeft >= scrollWidth - clientWidth - 1) {
+          carouselRef.current.scrollTo({ left: 0, behavior: 'auto' });
         } else {
-          // Scroll to the next card (roughly 350px max-width + gap)
-          carouselRef.current.scrollBy({ left: 380, behavior: 'smooth' });
+          // Scroll continuously by 1 pixel per frame
+          carouselRef.current.scrollBy({ left: 1, behavior: 'auto' });
         }
       }
-    }, 4000); // 4 seconds per slide
+      animationFrameId = requestAnimationFrame(scroll);
+    };
 
-    return () => clearInterval(interval);
+    animationFrameId = requestAnimationFrame(scroll);
+    return () => cancelAnimationFrame(animationFrameId);
   }, []);
 
   return (
