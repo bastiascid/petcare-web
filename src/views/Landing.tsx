@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { PawPrint, Calendar, Heart, Shield, ChevronRight, Stethoscope } from 'lucide-react';
+import { PawPrint, Calendar, Heart, Shield, ChevronRight, Stethoscope, Activity, Users } from 'lucide-react';
 import './landing.css';
 
 export function Landing() {
@@ -48,18 +48,12 @@ export function Landing() {
         </div>
       </header>
 
-      {/* Friendly Pets Banner */}
-      <div style={{ display: 'flex', gap: '1rem', padding: '0 5%', marginTop: '-2rem', overflowX: 'auto', paddingBottom: '2rem' }}>
-        <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&q=80&w=300&h=200" alt="Gato" className="pet-banner-img" />
-        <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=300&h=200" alt="Perrito" className="pet-banner-img" />
-        <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&q=80&w=300&h=200" alt="Mascotas" className="pet-banner-img" />
-      </div>
-
       {/* Services Section */}
       <section className="landing-services">
         <h2>Servicios que ofrecemos</h2>
-        <div className="services-carousel">
-          <div className="service-card">
+        <div className="services-carousel-wrapper">
+          <div className="services-carousel">
+            <div className="service-card">
             <img src="https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&q=80&w=400&h=200" alt="Perro en veterinaria" className="service-img" />
             <div className="service-content">
               <div className="service-icon"><Stethoscope size={24} /></div>
@@ -83,6 +77,23 @@ export function Landing() {
               <p>Encuentra a tu próximo mejor amigo o ayuda a mascotas a encontrar un hogar amoroso.</p>
             </div>
           </div>
+          <div className="service-card">
+            <img src="https://images.unsplash.com/photo-1583337130417-3346a1be7dee?auto=format&fit=crop&q=80&w=400&h=200" alt="Veterinario trabajando" className="service-img" />
+            <div className="service-content">
+              <div className="service-icon"><Activity size={24} /></div>
+              <h3>CRM para Clínicas</h3>
+              <p>Gestión completa de pacientes, inventario y finanzas diseñada específicamente para centros veterinarios.</p>
+            </div>
+          </div>
+          <div className="service-card">
+            <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?auto=format&fit=crop&q=80&w=400&h=200" alt="Comunidad de mascotas" className="service-img" />
+            <div className="service-content">
+              <div className="service-icon"><Users size={24} /></div>
+              <h3>Ventajas del Mercado</h3>
+              <p>Únete a la red más grande de profesionales y dueños de mascotas. Mayor visibilidad y clientes para tu clínica.</p>
+            </div>
+          </div>
+        </div>
         </div>
       </section>
 

@@ -2,8 +2,24 @@
 .landing-container {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   color: #18181b;
-  background-color: #fafafa;
+  background: url('/landing-bg.png') center/cover fixed no-repeat;
   overflow-x: hidden;
+  position: relative;
+}
+
+.landing-container::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  z-index: 0;
+}
+
+/* Ensure content stays above the backdrop */
+.landing-nav, .landing-hero, .landing-services, .landing-advantages, .landing-footer {
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes fadeInDown {
@@ -27,7 +43,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 5%;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(12px);
   position: sticky;
   top: 0;
@@ -66,18 +82,7 @@
   justify-content: space-between;
   padding: 6rem 5%;
   min-height: 80vh;
-  background: url('/landing-bg.png') center/cover no-repeat;
   gap: 4rem;
-  position: relative;
-}
-
-.landing-hero::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(8px);
-  z-index: 0;
 }
 
 .hero-content, .hero-graphic {
@@ -233,23 +238,30 @@
   letter-spacing: -0.02em;
 }
 
+.services-carousel-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
 .services-carousel {
   display: flex;
   gap: 2rem;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scroll-padding-left: 5%;
+  scroll-padding-left: 1rem;
+  padding: 1rem;
   padding-bottom: 2rem;
-  /* Hide scrollbar for a cleaner look */
   scrollbar-width: none; 
+  max-width: 1200px;
 }
 .services-carousel::-webkit-scrollbar {
   display: none;
 }
 
 .service-card {
-  flex: 0 0 80%;
-  max-width: 380px;
+  flex: 0 0 85%;
+  max-width: 350px;
   scroll-snap-align: center;
   padding: 0;
   border-radius: 20px;
